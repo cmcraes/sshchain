@@ -1,0 +1,13 @@
+CMakeFiles/*
+.idea/*
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+*/Makefile
+*.toc
+*.idx
+*.aux
+*.ilg
+*.log
+*.ind
+*.pdf

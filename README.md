@@ -7,7 +7,7 @@ Since it keeps raining, I write some more documentation.
 
 Authors:
 * Philipp Jaeger <pjaeger@rhrk.uni-kl.de>
-* Craig McRae<Craig McRae <mcraec3@myumanitoba.ca>
+* Craig McRae <mcraec3@myumanitoba.ca>
 
 ## Installation
 

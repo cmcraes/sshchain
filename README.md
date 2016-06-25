@@ -1,7 +1,11 @@
-# Experimental code for calculation of Lohschmitt echo 
+# SSH Model Code
+
+Experimental code for calculation of Lohschmitt echo 
 in Su-Schrieffer-Heeger chains 
 
 Since it keeps raining, I write some more documentation.
+
+## Installation
 
 To install this package,
 

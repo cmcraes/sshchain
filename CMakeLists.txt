@@ -3,7 +3,7 @@ project(ssh_craig)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
-set(SOURCE_FILES main.cpp complex.cpp complex.h)
+set(SOURCE_FILES main.cpp mpcomplex.cpp mpcomplex.h)
 set(LIBS libgmp.so libmblas_gmp.so libmlapack_gmp.so libgmpxx.so.0 libgomp.so.1)
 
 include_directories(/home/philipp/lib/mpack/include /usr/include)

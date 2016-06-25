@@ -4,6 +4,8 @@
 #include <ctime>
 #include <iomanip>
 
+#include "mpcomplex.h"
+
 #define mint mpackint
 #define N 100
 #define N2 N*N
@@ -134,6 +136,7 @@ void inverse(mpf_class *A, mpf_class *B) {
 }
 
 int main(){
+
     cout << fixed << setprecision(20); 	//Output precision
     mpf_set_default_prec(PREC);			//Numeric precision
     const mpf_class H_BAR_INV = (9.4825217771312202812908507856980167254410816649238827*pow(10,33));

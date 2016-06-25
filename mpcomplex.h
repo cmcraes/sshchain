@@ -40,7 +40,9 @@ public:
 
     //constructors
     mpcomplex(const mpfloat_t x, const mpfloat_t y);
+
     mpcomplex(const mpfloat_t x);
+
     mpcomplex();
 
     //deconstructor
@@ -48,6 +50,7 @@ public:
 
     //assign operators
     mpcomplex operator=(const mpcomplex a);
+
     mpcomplex operator=(const mpfloat_t a);
 
     //boolean operators
@@ -56,6 +59,7 @@ public:
     mpfloat_t real() {
         return re;
     }
+
     mpfloat_t imag() {
         return im;
     }
@@ -66,15 +70,19 @@ public:
 
 //aritmethic operators
 mpcomplex operator+(const mpcomplex a, const mpcomplex b);
+
 mpcomplex operator+(const mpcomplex a, const mpfloat_t b);
 
 mpcomplex operator-(const mpcomplex a, const mpcomplex b);
+
 mpcomplex operator-(const mpcomplex a, const mpfloat_t b);
 
 mpcomplex operator*(const mpcomplex a, const mpcomplex b);
+
 mpcomplex operator*(const mpcomplex a, const mpfloat_t b);
 
 mpcomplex operator/(const mpcomplex a, const mpfloat_t b);
+
 mpcomplex operator/(const mpcomplex a, const mpcomplex b);
 
 //analytic functions
@@ -82,21 +90,34 @@ mpcomplex operator/(const mpcomplex a, const mpcomplex b);
  * TODO
  */
 mpfloat_t abs(mpcomplex arg);
-mpcomplex sin(mpcomplex arg);
-mpcomplex cos(mpcomplex arg);
-mpcomplex asin(mpcomplex arg);
-mpcomplex acos(mpcomplex arg);
-mpcomplex tan(mpcomplex arg);
-mpcomplex atan(mpcomplex arg);
-mpcomplex sinh(mpcomplex arg);
-mpcomplex cosh(mpcomplex arg);
-mpcomplex asinh(mpcomplex arg);
-mpcomplex acosh(mpcomplex arg);
-mpcomplex tanh(mpcomplex arg);
-mpcomplex atanh(mpcomplex arg);
-mpcomplex exp(mpcomplex arg);
-mpcomplex log(mpcomplex arg);
 
+mpcomplex sin(mpcomplex arg);
+
+mpcomplex cos(mpcomplex arg);
+
+mpcomplex asin(mpcomplex arg);
+
+mpcomplex acos(mpcomplex arg);
+
+mpcomplex tan(mpcomplex arg);
+
+mpcomplex atan(mpcomplex arg);
+
+mpcomplex sinh(mpcomplex arg);
+
+mpcomplex cosh(mpcomplex arg);
+
+mpcomplex asinh(mpcomplex arg);
+
+mpcomplex acosh(mpcomplex arg);
+
+mpcomplex tanh(mpcomplex arg);
+
+mpcomplex atanh(mpcomplex arg);
+
+mpcomplex exp(mpcomplex arg);
+
+mpcomplex log(mpcomplex arg);
 
 
 #endif //SSH_CRAIG_COMPLEX_H

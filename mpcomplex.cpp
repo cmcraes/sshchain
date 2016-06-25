@@ -13,6 +13,7 @@ mpcomplex::mpcomplex(const mpfloat_t x, const mpfloat_t y) {
     re = x;
     im = y;
 }
+
 /**
 * \param x real part
 * Constructor with one GMP number
@@ -34,9 +35,10 @@ mpcomplex::mpcomplex() {
  * Doconstructor to free unneeded memory
  */
 mpcomplex::~mpcomplex() {
-    mpf_clear((mpf_ptr &)re);
-    mpf_clear((mpf_ptr &)im);
+    mpf_clear((mpf_ptr &) re);
+    mpf_clear((mpf_ptr &) im);
 }
+
 /**
  * Assign operator
  * \param a complex Number to be assigned
@@ -58,7 +60,7 @@ mpcomplex mpcomplex::operator=(const mpfloat_t a) {
 }
 
 mpcomplex mpcomplex::cconj() {
-    return mpcomplex(re,-im);
+    return mpcomplex(re, -im);
 }
 
 /**
@@ -68,8 +70,9 @@ mpcomplex mpcomplex::cconj() {
 mpcomplex operator+(const mpcomplex a, const mpcomplex b) {
     return mpcomplex(b.re + a.re, b.im + a.im);
 }
+
 mpcomplex operator+(const mpcomplex a, const mpfloat_t b) {
-    return a+mpcomplex(b);
+    return a + mpcomplex(b);
 }
 
 /**
@@ -79,8 +82,9 @@ mpcomplex operator+(const mpcomplex a, const mpfloat_t b) {
 mpcomplex operator-(const mpcomplex a, const mpcomplex b) {
     return mpcomplex(b.re - a.re, b.im - a.im);
 }
+
 mpcomplex operator-(const mpcomplex a, const mpfloat_t b) {
-    return a-mpcomplex(b);
+    return a - mpcomplex(b);
 }
 
 /**
@@ -88,10 +92,11 @@ mpcomplex operator-(const mpcomplex a, const mpfloat_t b) {
  * Accepts mpcomplex, and mpfloat_t (which wraps the standard types)
  */
 mpcomplex operator*(const mpcomplex a, const mpcomplex b) {
-    return mpcomplex((a.re*b.re - a.im*b.im), (a.re*b.im + a.im*b.re));
+    return mpcomplex((a.re * b.re - a.im * b.im), (a.re * b.im + a.im * b.re));
 }
+
 mpcomplex operator*(const mpcomplex a, const mpfloat_t b) {
-    return a-mpcomplex(b);
+    return a - mpcomplex(b);
 }
 
 /**
@@ -99,14 +104,15 @@ mpcomplex operator*(const mpcomplex a, const mpfloat_t b) {
  * Accepts mpcomplex, and mpfloat_t (which wraps the standard types)
  */
 mpcomplex operator/(const mpcomplex a, const mpfloat_t b) {
-    return mpcomplex(a.re/b,a.im/b);
+    return mpcomplex(a.re / b, a.im / b);
 }
+
 mpcomplex operator/(const mpcomplex a, const mpcomplex b) {
-    mpcomplex tmp=b;
+    mpcomplex tmp = b;
     mpcomplex denominator_cmplx = b * tmp.cconj();
     mpfloat_t denominator = denominator_cmplx.re;
     delete &tmp;
     delete &denominator_cmplx;
     mpcomplex counter = a * b;
-    return counter/denominator;
+    return counter / denominator;
 }

@@ -5,6 +5,10 @@ in Su-Schrieffer-Heeger chains
 
 Since it keeps raining, I write some more documentation.
 
+Authors:
+* Philipp Jaeger <pjaeger@rhrk.uni-kl.de>
+* Craig McRae<Craig McRae <mcraec3@myumanitoba.ca>
+
 ## Installation
 
 To install this package,
@@ -26,8 +30,7 @@ is the backend used by boost. Probably, the version shipped with mpack should wo
 
 ### mpalapck/mpack
 You can build `mplapck` from scratch, but it is a pin in the neck. 
-Thus I added a binary package which is build for linux x86_64.
-The building OS was ubuntu 12.04, and it seems also to wark at current fedora
+I have a binary package which is way to big for github, but I can gibe it upon request.
 
 ### GOMP
 for reasons

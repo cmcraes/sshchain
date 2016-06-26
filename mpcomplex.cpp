@@ -96,7 +96,9 @@ mpcomplex operator+(const mpcomplex a, const mpfloat_t b) {
 
 /**
  * Substraction operator
+<<<<<<< HEAD
  * for two mpcomplex objects
+ * Accepts mpcomplex, and mpfloat_t (which wraps the standard types)
  * \memberof mpcomplex
  */
 mpcomplex operator-(const mpcomplex a, const mpcomplex b) {

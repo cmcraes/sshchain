@@ -32,7 +32,7 @@ typedef mp::number<mp::gmp_float<PRECISION> > mpfloat_t;
  * in case you use gcc.
  */
 //template <int PRECISION>
-class mpcomplex {
+typedef struct mpcomplex {
 public:
     //members
     mpfloat_t re;
@@ -66,7 +66,8 @@ public:
 
     //complex conjugate
     mpcomplex cconj();
-};
+    mpcomplex cconj(mpcomplex c);
+} mpcomplex_t;
 
 //aritmethic operators
 mpcomplex operator+(const mpcomplex a, const mpcomplex b);

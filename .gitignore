@@ -8,5 +8,5 @@ Makefile
 */Makefile
 latex/*
 html*
-le.csv
+*le.csv
 *.a

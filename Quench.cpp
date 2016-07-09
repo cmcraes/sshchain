@@ -1,15 +1,15 @@
 #include <iostream>
-#include <fstream>
 #include <mblas_gmp.h>
 #include <mlapack_gmp.h>
 #include <ctime>
 #include <iomanip>
+#include <fstream>
 #include "mcomplex.h"
 
 #define mint mpackint
 #define N 12
 #define N2 N*N
-#define PREC 200
+#define PREC 256
 #define LDA N
 using namespace std;
 
@@ -57,7 +57,7 @@ void matAdd(Matrix A, Mat B, Mat C){
 }
 
 template <typename Mat>
-Mat matSub(Mat A, Mat B, Mat C){
+void matSub(Mat A, Mat B, Mat C){
 	for (int i = 0; i < N2; i++)
 		C[i] = A[i] - B[i];
 }
@@ -65,7 +65,7 @@ Mat matSub(Mat A, Mat B, Mat C){
 template <typename PrintMatrix> 
 void printMat(int n, int M, PrintMatrix A, int lda) {
 	cout << '\n';
-    for (int j = 0; j < n; j++) {
+    	for (int j = 0; j < n; j++) {
 		cout << "[ ";
 		for (int i = 0; i < M; i++) {
 		    cout << A[i + j * lda];
@@ -129,14 +129,14 @@ mcomplex determinant(mcomplex* a){
 mpf_class determinant(mpf_class * A){
 	mpf_class det = 1;
 	mint *IPIV = new mint[N];
-    mint INFO;
+    	mint INFO;
 	
-    Rgetrf(N, N, A, N, IPIV, &INFO);	//Finds the LU decomposition of A
+    	Rgetrf(N, N, A, N, IPIV, &INFO);	//Finds the LU decomposition of A
 	
 	for (int i = 0; i < N2; i+=(N+1))
 		det *= A[i];
 	
-    delete[]IPIV;
+    	delete[]IPIV;
 	return det;
 }
 
@@ -172,36 +172,33 @@ int main(){
 	mcomplex* EigMat = new mcomplex[N2];	//EigenMat used to bring the ExpDiag into original magtrix
 	mcomplex* ExpDiag = new mcomplex[N2];	//Complex matrix with e^diagonal eigen elements 
 	mpf_class* R = new mpf_class[N2];		//Correlation Matrix
-    mpf_class* H_f = new mpf_class[N2];		//Tridiagonal Hamiltonians
+    	mpf_class* H_f = new mpf_class[N2];		//Tridiagonal Hamiltonians
 	mpf_class* H_i = new mpf_class[N2];		//Entries are Conjugate of H_f
 	mpf_class* D = new mpf_class[N];		//Array of diagonal elements of H
 	mpf_class* sD = new mpf_class[N-1];		//Array of Subdiagonal Elements of H
-    mpf_class* work = new mpf_class[2*N-2]; //WorkSpace
+    	mpf_class* work = new mpf_class[2*N-2]; //WorkSpace
 	mpf_class* val = new mpf_class[2];		//Array Of values to fill H&E with
 	mcomplex det;							//determinant
 	mpf_class delta;						//Dimerization parameter
 	mpf_class timeI, timeF, dt, curr;		//Time evolution parameters			
+	mpf_class L = N;						//Chain Size
 	mint* info = new mint[2];				//Variable to tell if an Mpack function converged or not
-	bool index = false;						//Index of val array, used for filling A
+	ofstream output;
+	bool index = true;						//Index of val array, used for filling A
 
 	//get parameters
 	cout << "What is the value of the dimerization parameter? ";
 	cin >> delta;
-
 	cout << "Enter the initial time: ";
 	cin >> timeI;
 	cout << "Enter the final time: ";
 	cin >> timeF;
 	cout << "Enter the change in time to calculate: ";
 	cin >> dt;
-	string fn="";
-	cout << "Enter output file name: [default: le.csv] " << endl;
-	getline(cin, fn);
-	if (fn.empty()) fn="le.csv";
 	
 	//Get System time for rough approixmation of Algorithm run time
 	time_t result = std::time(NULL);
-    cout << asctime(localtime(&result));
+    	cout << asctime(localtime(&result));
 
 	//set matrix inputs
 	val[0] = 1 + delta;
@@ -232,10 +229,10 @@ int main(){
 	/*Rsteqr finds the Eigen values and Vectors of H. On exit H contains the matrix of 
 	Eiegnvectors row-wise ascending W.R.T. eigenvalue, and D the array of eigenvalues*/
 	get_Diagonals(H_i,D,sD);
-    Rsteqr("I", N, D, sD, H_i, N, work, &info[0]);
+    	Rsteqr("I", N, D, sD, H_i, N, work, &info[0]);
 	
 	get_Diagonals(H_f,D,sD);
-    Rsteqr("I", N, D, sD, H_f, N, work, &info[1]);
+    	Rsteqr("I", N, D, sD, H_f, N, work, &info[1]);
 
 	if (info[0] == 0 && info[1] == 0) {//mlapack converged!
 		//Create Correlation matrix R
@@ -250,31 +247,29 @@ int main(){
 			else
 				H_i[i] = -R[i];
 		}
-		//open output file and write header
-		ofstream fout;
-		fout.open(fn);
+		output.open("output.txt");
 		for (curr = timeI; curr < timeF; curr+=dt){
 			matrixExp(H_f, D, curr, EigMat, ExpDiag); //ExpDiag now Contains e^(-i*H_final*t) in original basis
 			matMult(R, false, ExpDiag, false, EigMat); //EigMat = R*e^(-i*H_final*t)
 			matAdd(H_i, EigMat, EigMat);//EigMat = (I-R)+(R*e^(-i*H_final*t))
 			det = determinant(EigMat); //Abs(Det(EigMat)) = Loschmidt Echo!!
-			fout << curr << ", " << Abs(det) << "\n";
-			//cout << "Time: " << curr << ", LE: " << Abs(det) << "\n";
+			output << "(" << curr << "," << -log(Abs(det))/L << ")\n";
 		}
+		output.close();
 	}
 	else
 		cout << "Rsteqr did not converge! :(\n";
 	
 	//Print out time again to find Apprx Algorithm run time
 	time_t resut = std::time(NULL);
-    cout << asctime(localtime(&resut));
+    	cout << asctime(localtime(&resut));
 
 	//Free up workspace
-    delete[]H_f;
+    	delete[]H_f;
 	delete[]H_i;
-    delete[]D;
+	delete[]D;
 	delete[]sD;
-    delete[]work;
+    	delete[]work;
 	delete[]val;
 	delete[]EigMat;
 	delete[]ExpDiag;

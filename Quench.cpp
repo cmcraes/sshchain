@@ -1,20 +1,19 @@
 #include <iostream>
-#include <fstream>
 #include <mblas_gmp.h>
 #include <mlapack_gmp.h>
 #include <ctime>
 #include <iomanip>
+#include <fstream>
 #include "mcomplex.h"
 
 #define mint mpackint
-#define N 12
+#define N 100
 #define N2 N*N
-#define PREC 200
+#define PREC 256
 #define LDA N
 using namespace std;
 
 /** Loschmidt Echo Prgram
-* 
 * 
 * Craig McRae
 * 2016-07-03
@@ -24,7 +23,6 @@ using namespace std;
  technically multiplying matrices but they're stored as 1xN*N Vectors, Not NxN matrices*/
 template <typename Mat, typename matrix>
 void matMult(matrix A, bool Adiag, Mat B, bool Bdiag, Mat C){
-
 	if (!Adiag && !Bdiag)//Neither diagonal
 	    for (int i = 0; i < N2; i++){
 			for (int k = 0; k < N; k++){
@@ -57,7 +55,7 @@ void matAdd(Matrix A, Mat B, Mat C){
 }
 
 template <typename Mat>
-Mat matSub(Mat A, Mat B, Mat C){
+void matSub(Mat A, Mat B, Mat C){
 	for (int i = 0; i < N2; i++)
 		C[i] = A[i] - B[i];
 }
@@ -155,14 +153,12 @@ void get_Diagonals(mpf_class* A, mpf_class* D, mpf_class* sD){
 
 void matrixExp(mpf_class* EigMat, mpf_class* EigVals, mpf_class time, mcomplex* workspace, mcomplex* ExpDiag){
 	mcomplex Z;
-	//Matrix of: e^(-i*t*lambda/h_bar) * Inverse EigenMatrix 	
+	//Matrix of: e^(-i*t*lambda/h_bar) * Inverse EigenMatrix (Diagonal so much easier than matrix mult)	
 	for (int i = 0; i < N; i++){
 		Z = mcomplex(cos(time*EigVals[i]),-sin(time*EigVals[i]));
 		for (int j = 0; j < N; j++)
-			workspace[(i%N)*N + j] = Z*EigMat[(i%N)*N + j];
+			workspace[(i%N)*N + j] = Z*EigMat[(j%N)*N + i];
 	}
-	transpose(EigMat);
-	//ExpDiag becomes: EigMat*e^(-i*t*lambda)*InvEigMat
 	matMult(EigMat, false, workspace, false, ExpDiag); //ExpDiag now contains e^(-i*H_f*t) in original basis
 }
 
@@ -181,23 +177,20 @@ int main(){
 	mcomplex det;							//determinant
 	mpf_class delta;						//Dimerization parameter
 	mpf_class timeI, timeF, dt, curr;		//Time evolution parameters			
+	mpf_class L = N;						//Chain Size
 	mint* info = new mint[2];				//Variable to tell if an Mpack function converged or not
-	bool index = false;						//Index of val array, used for filling A
+	ofstream output;
+	bool index = true;						//Index of val array, used for filling A
 
 	//get parameters
 	cout << "What is the value of the dimerization parameter? ";
 	cin >> delta;
-
 	cout << "Enter the initial time: ";
 	cin >> timeI;
 	cout << "Enter the final time: ";
 	cin >> timeF;
 	cout << "Enter the change in time to calculate: ";
 	cin >> dt;
-	string fn="";
-	cout << "Enter output file name: [default: le.csv] " << endl;
-	getline(cin, fn);
-	if (fn.empty()) fn="le.csv";
 	
 	//Get System time for rough approixmation of Algorithm run time
 	time_t result = std::time(NULL);
@@ -236,6 +229,7 @@ int main(){
 	
 	get_Diagonals(H_f,D,sD);
     Rsteqr("I", N, D, sD, H_f, N, work, &info[1]);
+	transpose(H_f);
 
 	if (info[0] == 0 && info[1] == 0) {//mlapack converged!
 		//Create Correlation matrix R
@@ -250,17 +244,15 @@ int main(){
 			else
 				H_i[i] = -R[i];
 		}
-		//open output file and write header
-		ofstream fout;
-		fout.open(fn);
+		output.open("output.txt");
 		for (curr = timeI; curr < timeF; curr+=dt){
 			matrixExp(H_f, D, curr, EigMat, ExpDiag); //ExpDiag now Contains e^(-i*H_final*t) in original basis
 			matMult(R, false, ExpDiag, false, EigMat); //EigMat = R*e^(-i*H_final*t)
 			matAdd(H_i, EigMat, EigMat);//EigMat = (I-R)+(R*e^(-i*H_final*t))
 			det = determinant(EigMat); //Abs(Det(EigMat)) = Loschmidt Echo!!
-			fout << curr << ", " << Abs(det) << "\n";
-			//cout << "Time: " << curr << ", LE: " << Abs(det) << "\n";
+			output << "(" << curr << "," << -log(Abs(det))/L << ")\n";
 		}
+		output.close();
 	}
 	else
 		cout << "Rsteqr did not converge! :(\n";
